@@ -28,50 +28,50 @@ import med.voll.api.medico.MedicoRepository;
 @RequestMapping("medicos")
 public class MedicoController {
 
-    @Autowired
-    private MedicoRepository repository;
+	@Autowired
+	private MedicoRepository repository;
 
-    @PostMapping
-    @Transactional
-    public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroMedico dados, UriComponentsBuilder uriBuilder) {
-    	var medico = new Medico();
-        medico = repository.save(new Medico(dados));
-        
-        var uri = uriBuilder.path("medicos/{id}").buildAndExpand(medico.getId()).toUri();
-        
-        return ResponseEntity.created(uri).body(new DadosDetalhamentoDoMedico(medico));
-        
-    }
+	@PostMapping
+	@Transactional
+	public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroMedico dados, UriComponentsBuilder uriBuilder) {
+		var medico = new Medico();
+		medico = repository.save(new Medico(dados));
 
-    @GetMapping
-    public ResponseEntity<Page<DadosListagemMedico>> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
-        var page = repository.findAllByAtivoTrue(paginacao).map(DadosListagemMedico::new);
-        return ResponseEntity.ok(page);
-    }
+		var uri = uriBuilder.path("medicos/{id}").buildAndExpand(medico.getId()).toUri();
 
-    @PutMapping
-    @Transactional
-    public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoMedico dados) {
-        var medico = repository.getReferenceById(dados.id());
-        medico.atualizarInformacoes(dados);
-        return ResponseEntity.ok(new DadosDetalhamentoDoMedico(medico));
-    }
+		return ResponseEntity.created(uri).body(new DadosDetalhamentoDoMedico(medico));
 
-    @DeleteMapping("/{id}")
-    @Transactional
-    public ResponseEntity excluir(@PathVariable Long id) {
-        var medico = repository.getReferenceById(id);
-        medico.excluir();   
-        return ResponseEntity.noContent().build();
-        
-    }
-    
-    @GetMapping("/{id}")
-    public ResponseEntity detalhar(@PathVariable Long id) {
-        var medico = repository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosDetalhamentoDoMedico(medico));
-        
-    }
+	}
 
+	@GetMapping
+	public ResponseEntity<Page<DadosListagemMedico>> listar(
+			@PageableDefault(size = 10, sort = { "nome" }) Pageable paginacao) {
+		var page = repository.findAllByAtivoTrue(paginacao).map(DadosListagemMedico::new);
+		return ResponseEntity.ok(page);
+	}
+
+	@PutMapping
+	@Transactional
+	public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoMedico dados) {
+		var medico = repository.getReferenceById(dados.id());
+		medico.atualizarInformacoes(dados);
+		return ResponseEntity.ok(new DadosDetalhamentoDoMedico(medico));
+	}
+
+	@DeleteMapping("/{id}")
+	@Transactional
+	public ResponseEntity excluir(@PathVariable Long id) {
+		var medico = repository.getReferenceById(id);
+		medico.excluir();
+		return ResponseEntity.noContent().build();
+
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity detalhar(@PathVariable Long id) {
+		var medico = repository.getReferenceById(id);
+		return ResponseEntity.ok(new DadosDetalhamentoDoMedico(medico));
+
+	}
 
 }
